@@ -77,7 +77,6 @@ class LSSTAuth(oauthenticator.GitHubOAuthenticator):
     """Authenticator to use our custom environment settings.
     """
     enable_auth_state = True
-    scope = ['public_repo', 'read:org', 'user:email']
     _state = None
 
     login_handler = oauthenticator.GitHubLoginHandler
@@ -86,6 +85,7 @@ class LSSTAuth(oauthenticator.GitHubOAuthenticator):
     def pre_spawn_start(self, user, spawner):
         # First pulls can be really slow for the LSST stack containers,
         #  so let's give it a big timeout
+        self.log.info("Authenticator scope: %s" % str(self.scope))
         spawner.http_timeout = 60 * 15
         spawner.start_timeout = 60 * 15
         # The spawned containers need to be able to talk to the hub through
@@ -529,7 +529,7 @@ c.LSSTAuth.client_id = os.environ['GITHUB_CLIENT_ID']
 c.LSSTAuth.client_secret = os.environ['GITHUB_CLIENT_SECRET']
 c.LSSTAuth.github_organization_whitelist = set(
     (os.environ['GITHUB_ORGANIZATION_WHITELIST'].split(",")))
-c.LSSTAuth.scope = ['public_repo', 'read:org', 'user:email']
+c.LSSTAuth.scope = [u'public_repo', u'read:org', u'user:email']
 # Set options form
 if len(imagelist) > 1:
     c.LSSTSpawner.options_form = optform
