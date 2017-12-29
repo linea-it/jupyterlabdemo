@@ -91,6 +91,9 @@ RUN  mkdir -p /usr/share/git && \
      git clone https://github.com/lsst-sqre/jupyterlab-savequit && \
      for i in hub savequit bokeh; do \
          cd jupyterlab-${i} && \
+         if [ "${i}" == "savequit" ]; then \
+	     git checkout tickets/DM-13150 ; \
+	 fi && \
          python3 /usr/bin/jupyter labextension link . --no-build && \
          jlpm install --unsafe-perm && \
          jlpm run build && \
