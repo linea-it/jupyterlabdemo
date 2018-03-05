@@ -3,13 +3,17 @@ USER root
 RUN  yum install -y epel-release
 RUN  yum repolist
 RUN  yum -y  upgrade
-RUN  yum -y install python-pip python34 python34-pip gcc python34-devel \
+RUN  yum -y install python-pip python36 gcc python36-devel \
       git sudo \
       python-devel http-parser nodejs \
       make zlib-devel perl-ExtUtils-MakeMaker gettext \
-      python34-tkinter pandoc \
+      python36-tkinter pandoc \
       texlive texlive-collection-xetex texlive-ec texlive-upquote \
       texlive-adjustbox
+# Make sure pip3 is available
+RUN ln -s /usr/bin/python3.6 /usr/bin/python3
+RUN python3.6 -m ensurepip --default-pip
+
 # Newer git; install from SCL
 RUN  yum -y install centos-release-scl && \
      yum-config-manager --enable rhel-server-rhscl-7-rpms && \
@@ -47,7 +51,7 @@ RUN  pip3 install \
 RUN  git ls-remote https://github.com/jupyterlab/jupyterlab.git master | \
        awk '{print $1}' > /root/jupyterlab.commit
 RUN  pip2 install --upgrade virtualenv virtualenvwrapper pipenv
-RUN  python3 /usr/bin/nbdime config-git --enable --system
+RUN  python3 /usr/local/bin/nbdime config-git --enable --system
 # scipy/pandas/numpy/astropy/matplotlib all already there
 RUN  source /opt/lsst/software/stack/loadLSST.bash && \
      pip install --upgrade pip \
@@ -71,16 +75,16 @@ RUN  pdir=/opt/lsst/software/stack/python/current/bin && \
       fi
 RUN  /opt/lsst/software/stack/python/current/bin/python${PYVER} \
       -m ipykernel install --name 'LSST_Stack'
-RUN  python3 /usr/bin/jupyter serverextension enable --py jupyterlab \
+RUN  python3 /usr/local/bin/jupyter serverextension enable --py jupyterlab \
       --sys-prefix
 RUN  /opt/lsst/software/stack/python/current/bin/python${PYVER} \
-      /usr/bin/jupyter serverextension enable --py jupyterlab --sys-prefix
-RUN  python3 /usr/bin/jupyter nbextension enable --py widgetsnbextension \
+      /usr/local/bin/jupyter serverextension enable --py jupyterlab --sys-prefix
+RUN  python3 /usr/local/bin/jupyter nbextension enable --py widgetsnbextension \
       --sys-prefix
 RUN  /opt/lsst/software/stack/python/current/bin/python${PYVER} \
-      /usr/bin/jupyter serverextension enable --py jupyterlab --sys-prefix
+      /usr/local/bin/jupyter serverextension enable --py jupyterlab --sys-prefix
 RUN  /opt/lsst/software/stack/python/current/bin/python${PYVER} \
-      /usr/bin/jupyter nbextension enable --py widgetsnbextension --sys-prefix
+      /usr/local/bin/jupyter nbextension enable --py widgetsnbextension --sys-prefix
 RUN  jupyter labextension install @jupyter-widgets/jupyterlab-manager
 RUN  mkdir -p /usr/share/git && \
      cd /usr/share/git && \
@@ -90,7 +94,7 @@ RUN  mkdir -p /usr/share/git && \
      git clone https://github.com/bokeh/jupyterlab_bokeh.git && \
      for i in jupyterlab-hub jupyterlab-savequit jupyterlab_bokeh; do \
          cd ${i} && \
-         python3 /usr/bin/jupyter labextension link . --no-build && \
+         python3 /usr/local/bin/jupyter labextension link . --no-build && \
          jlpm install --unsafe-perm && \
          jlpm run build && \
          cd .. ;\
@@ -126,11 +130,11 @@ RUN  cd /usr/share/git && \
      scons install force=True && \
      scons declare force=True
 RUN  for i in clean build; do \
-         /usr/bin/python3 /usr/bin/jupyter lab ${i} ; \
+         /usr/bin/python3 /usr/local/bin/jupyter lab ${i} ; \
      done
 # Temporary fix for theme problems 2017-12-20
 # Why do I need this?
-RUN /usr/bin/python3 /usr/bin/jupyter labextension install jupyterlab_bokeh
+RUN /usr/bin/python3 /usr/local/bin/jupyter labextension install jupyterlab_bokeh
 # Lab extensions require write permissions by running user.
 RUN  groupadd -g 768 jupyter && \
      u="/usr/share" && \
