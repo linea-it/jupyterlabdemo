@@ -132,21 +132,17 @@ RUN  cd /usr/share/git && \
 RUN  for i in clean build; do \
          /usr/bin/python3 /usr/local/bin/jupyter lab ${i} ; \
      done
-# Temporary fix for theme problems 2017-12-20
-# Why do I need this?
-RUN /usr/bin/python3 /usr/local/bin/jupyter labextension install jupyterlab_bokeh
 # Lab extensions require write permissions by running user.
 RUN  groupadd -g 768 jupyter && \
-     u="/usr/share" && \
-     jl="jupyter/lab" && \
+     g="/usr/share/git" && \
+     jl="/usr/local/share/jupyter/lab" && \
 # If we recursively chown all of the lab directory, it gets rid of permission
 # errors on startup....but also radically slows down startup, by about
 # three minutes.
-     mkdir -p ${u}/${jl}/staging ${u}/${jl}/schemas ${u}/${jl}/themes && \
-     for i in git ${jl}/staging; do \
-#     for i in git ${jl}; do \
-         chgrp -R jupyter ${u}/${i} ; \
-         chmod -R g+w ${u}/${i} ; \
+     mkdir -p ${jl}/staging ${jl}/schemas ${jl}/themes && \
+     for i in ${g} ${jl}/staging; do \
+         chgrp -R jupyter ${i} ; \
+         chmod -R g+w ${i} ; \
      done
 # Custom local files
 COPY local01-virtualenvwrapper.sh local02-hub.sh local03-showmotd.sh  \
