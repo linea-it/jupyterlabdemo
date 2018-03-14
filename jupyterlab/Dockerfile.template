@@ -86,13 +86,13 @@ RUN  /opt/lsst/software/stack/python/current/bin/python${PYVER} \
 RUN  /opt/lsst/software/stack/python/current/bin/python${PYVER} \
       /usr/local/bin/jupyter nbextension enable --py widgetsnbextension --sys-prefix
 RUN  jupyter labextension install @jupyter-widgets/jupyterlab-manager
+RUN  /usr/bin/python3 /usr/local/bin/jupyter labextension install jupyterlab_bokeh
 RUN  mkdir -p /usr/share/git && \
      cd /usr/share/git && \
      jlpm global add webpack && \
      git clone https://github.com/jupyterhub/jupyterlab-hub.git && \
      git clone https://github.com/lsst-sqre/jupyterlab-savequit && \
-     git clone https://github.com/bokeh/jupyterlab_bokeh.git && \
-     for i in jupyterlab-hub jupyterlab-savequit jupyterlab_bokeh; do \
+     for i in jupyterlab-hub jupyterlab-savequit; do \
          cd ${i} && \
          python3 /usr/local/bin/jupyter labextension link . --no-build && \
          jlpm install --unsafe-perm && \
