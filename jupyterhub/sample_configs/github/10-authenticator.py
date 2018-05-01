@@ -80,6 +80,7 @@ class LSSTAuth(oauthenticator.GitHubOAuthenticator):
             if v["name"] == volname:
                 homefound = True
                 break
+        homefound = False
         if not homefound:
             spawner.volumes.extend([
                 {"name": volname,
