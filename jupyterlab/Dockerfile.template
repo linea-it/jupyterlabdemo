@@ -61,7 +61,7 @@ RUN  source scl_source enable rh-python36 && \
 #  Saves us a little installation
 RUN  source scl_source enable rh-python36 && \
       pip3 install \
-      https://github.com/jupyterlab/jupyterlab/zipball/master \
+      https://github.com/jupyterlab/jupyterlab/zipball/v0.32.1 \
       https://github.com/jupyterlab/jupyterlab_launcher/zipball/master \
       https://github.com/jupyter/notebook/zipball/master \
       https://github.com/jupyterhub/jupyterhub/zipball/master \
